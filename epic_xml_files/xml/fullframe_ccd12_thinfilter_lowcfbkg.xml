@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<instrument instrume="EPN" telescop="XMM">
+ <telescope>
+  <focallength value="7.5"/>
+  <fov diameter="0.5"/>
+  <psf filename="xmm_pn_psf.fits"/>
+  <vignetting filename="xmm_pn_vignet.fits"/>
+ </telescope>
+ <detector type="EPIC-pn">
+  <dimensions xwidth="64" ywidth="200"/>
+  <wcs rota="0.0" xdelt="0.00015" xrpix="32.5" xrval="-0.028569999694824218" ydelt="0.00015" yrpix="100.5" yrval="-0.01714550018310547"/>
+  <cte value="1"/>
+  <rmf filename="pn-thin-10.rmf"/>
+  <arf filename="pn-thin-10.arf"/>
+  <phabackground filename="pnclosedfilter_low_background_spectrum.fits"/>
+  <split par1="11.e-6" type="gauss"/>
+  <threshold_readout_lo_keV value="0."/>
+  <threshold_event_lo_keV value="200.e-3"/>
+  <threshold_split_lo_fraction value="0.01"/>
+  <threshold_pattern_up_keV value="12."/>
+  <readout mode="time">
+   <wait time="68.75e-3"/>
+   <loop end="199" increment="1" start="0" variable="$i">
+    <readoutline lineindex="0" readoutindex="$i"/>
+    <lineshift/>
+    <wait time="23.04e-6"/>
+   </loop>
+   <newframe/>
+  </readout>
+ </detector>
+</instrument>

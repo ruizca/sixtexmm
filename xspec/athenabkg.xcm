@@ -1,0 +1,18 @@
+method leven 10 0.01
+abund angr
+xsect bcmc
+cosmo 70 0 0.73
+xset delta 0.01
+systematic 0
+model apec + wabs(apec + powerlaw)
+          0.099
+              1
+              0
+        1.7e-06
+          0.018
+          0.225 
+              1 
+              0 
+        7.3e-07 
+           1.52 
+         8.e-07 
