@@ -1,27 +1,23 @@
 import logging
 import os
-import random
-import shutil
 from pathlib import Path
 
 from astropy.coordinates import SkyCoord
 
 from modules import simulate_epic as sp
-from modules import source as src
+from modules import simput, utils
 from modules.exposures import ExposureXMM
-
-from set_of_xmm_simulations_multiple_sources import make_bkg, make_ccf, make_images, make_catalogue, merge_simput_files, move_files
 
 
 logging.basicConfig(level=logging.INFO)
 
-data_path = Path("./sims/testmos")
+data_path = Path("./sims/fullobs")
 eband = "SOFT" # FULL, SOFT, HARD (see enums module)
 pointing = SkyCoord(0, 0, unit="deg")
-rollangle = 0.
+rollangle = None  # random roll angle
 exposure_time = 10000.
 
-ccf_path = make_ccf(data_path)
+ccf_path = utils.make_ccf(data_path)
 os.environ["SAS_CCF"] = str(ccf_path.resolve())
 
 xmmexp_mos1 = ExposureXMM(
@@ -46,22 +42,10 @@ xmmexp_pn = ExposureXMM(
     expid="S003",
 )
 
-bkg_simput_file = make_bkg(xmmexp_mos1, eband)
+bkg_simput_file = simput.make_bkg(xmmexp_mos1, eband)
+src_simput_file = simput.make_catalogue(xmmexp_mos1, eband)
 
-# src_simput_file = f"{xmmexp_mos1.prefix}_src_source.simput"
-# src.simput(
-#     pointing.ra,
-#     pointing.dec,
-#     xmmexp_mos1.mjdref,
-#     eband=eband,
-#     flux=5e-14,
-#     spec_file="xspec/age_lognlogs_spectrum.xcm",
-#     output_file=src_simput_file,
-# )
-
-src_simput_file = make_catalogue(xmmexp_mos1, eband)
-
-final_simput_file = merge_simput_files(
+final_simput_file = simput.merge_simput_files(
     src_simput_file, None, bkg_simput_file, xmmexp_mos1.prefix
 )
 
@@ -89,10 +73,10 @@ xmm_pn_evt_file = sp.run_xmm_simulation(
     split_bkg=False,
     badpixels=False,
 )
-make_images(xmmexp_mos1, xmm_mos1_evt_file)
-make_images(xmmexp_mos2, xmm_mos2_evt_file)
-make_images(xmmexp_pn, xmm_pn_evt_file)
+utils.make_images(xmmexp_mos1, xmm_mos1_evt_file)
+utils.make_images(xmmexp_mos2, xmm_mos2_evt_file)
+utils.make_images(xmmexp_pn, xmm_pn_evt_file)
 
-move_files(xmmexp_mos1, data_path)
-move_files(xmmexp_mos2, data_path)
-move_files(xmmexp_pn, data_path)
+utils.move_files(xmmexp_mos1, data_path)
+utils.move_files(xmmexp_mos2, data_path)
+utils.move_files(xmmexp_pn, data_path)

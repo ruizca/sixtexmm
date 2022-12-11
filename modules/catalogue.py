@@ -5,7 +5,6 @@ Created on Thu Sep 17 13:16:01 2020
 @author: A.Ruiz
 """
 import numpy as np
-import xspec as xs
 from astropy import units as u
 from astropy.coordinates import FK5
 from astropy.io import fits
@@ -14,6 +13,7 @@ from astropy_healpix import HEALPix
 from mocpy import MOC
 from mocpy.mocpy import flatten_pixels
 
+import xspec as xs
 from .enums import Eband
 from .source import make_lightcurve
 
@@ -21,12 +21,12 @@ rng = np.random.default_rng()
 
 
 def simput(
-    ra, dec, fov, output_file, eband="SOFT", fluxes=None, exptime=None,
+    ra, dec, fov, output_file, eband="SOFT", fluxes=None, exptime=None, max_depth=12
 ):
     eband = Eband[eband]
 
     # For the moment we use the same spectrum for all sources
-    catalogue = _make_catalogue(ra, dec, fov, eband, fluxes)
+    catalogue = _make_catalogue(ra, dec, fov, eband, fluxes, max_depth)
     spectrum = _make_spectrum()
 
     hdul = fits.HDUList()
@@ -42,12 +42,12 @@ def simput(
     hdul.writeto(output_file, overwrite=True)
 
 
-def _make_catalogue(ra, dec, fov, eband, fluxes=None, fmin=1e-15, fmax=1e-10):
+def _make_catalogue(ra, dec, fov, eband, fluxes=None, max_depth=12, fmin=1e-15, fmax=1e-10):
     if fluxes is None:
         fluxes = _random_fluxes(fov, fmin, fmax, eband.name, bright_sources=0)
 
     nsources = len(fluxes)
-    coords = _random_coordinates(ra, dec, fov, nsources)
+    coords = _random_coordinates(ra, dec, fov, nsources, max_depth)
 
     catalogue = Table()
     catalogue["SRC_ID"] = np.arange(1, nsources + 1)
