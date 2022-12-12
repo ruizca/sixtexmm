@@ -28,7 +28,7 @@ def main():
     n_jobs = 100
     eband = "SOFT"
     particle_bkg = "low"
-    data_path = Path("./sims/ruiz2023")
+    data_path = Path("./sims/statix")
 
     ccf_path = utils.make_ccf(data_path)
     os.environ["SAS_CCF"] = str(ccf_path.resolve())

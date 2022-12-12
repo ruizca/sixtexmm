@@ -3,7 +3,6 @@ import random
 import numpy as np
 import sixty
 from astropy import units as u
-from mocpy import MOC
 
 from . import background as bkg
 from . import catalogue

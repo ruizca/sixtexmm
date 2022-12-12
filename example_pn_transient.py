@@ -31,7 +31,7 @@ xmmexp_pn = ExposureXMM(
 
 bkg_simput_file = simput.make_bkg(xmmexp_pn, eband)
 transient_simput_file = simput.make_transient(
-    xmmexp_pn, eband, flux=1e-14, burst_duration=5000.0, coords=xmmexp_pn.pointing
+    xmmexp_pn, eband, flux=1.2e-14, burst_duration=5000.0, coords=xmmexp_pn.pointing
 )
 final_simput_file = simput.merge_simput_files(
     transient_simput_file, None, bkg_simput_file, xmmexp_pn.prefix
