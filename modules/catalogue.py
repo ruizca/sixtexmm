@@ -21,12 +21,12 @@ rng = np.random.default_rng()
 
 
 def simput(
-    ra, dec, fov, output_file, eband="SOFT", fluxes=None, exptime=None, max_depth=12
+    ra, dec, fov, output_file, eband="SOFT", exptime=None, **kwargs
 ):
     eband = Eband[eband]
 
     # For the moment we use the same spectrum for all sources
-    catalogue = _make_catalogue(ra, dec, fov, eband, fluxes, max_depth)
+    catalogue = _make_catalogue(ra, dec, fov, eband, **kwargs)
     spectrum = _make_spectrum()
 
     hdul = fits.HDUList()
@@ -42,9 +42,9 @@ def simput(
     hdul.writeto(output_file, overwrite=True)
 
 
-def _make_catalogue(ra, dec, fov, eband, fluxes=None, max_depth=12, fmin=1e-15, fmax=1e-10):
+def _make_catalogue(ra, dec, fov, eband, fluxes=None, max_depth=12, fmin=1e-15, fmax=1e-10, lgnlgs_norm=0.0):
     if fluxes is None:
-        fluxes = _random_fluxes(fov, fmin, fmax, eband.name, bright_sources=0)
+        fluxes = _random_fluxes(fov, fmin, fmax, eband.name, lgnlgs_norm, bright_sources=0)
 
     nsources = len(fluxes)
     coords = _random_coordinates(ra, dec, fov, nsources, max_depth)
@@ -78,8 +78,8 @@ def _make_catalogue(ra, dec, fov, eband, fluxes=None, max_depth=12, fmin=1e-15, 
     return hdu_catalogue
 
 
-def _random_fluxes(fov, fmin, fmax, band="SOFT", bright_sources=0):
-    def logn_logs(lgflux, band):
+def _random_fluxes(fov, fmin, fmax, band="SOFT", lgnlgs_norm=0.0, bright_sources=0):
+    def logn_logs(lgflux, lgnlgs_norm, band):
         # logN-logS results from Georgakakis et al. 2008 (I think)
         lgfb14 = {
             "FULL": 0.47,  # units 1e-14
@@ -89,25 +89,25 @@ def _random_fluxes(fov, fmin, fmax, band="SOFT", bright_sources=0):
             "VHRD": -0.09,
         }  # units 1e-14
 
-        b1, b2, lgknorm = -1.5, -2.5, 1.5  # 0.0
+        b1, b2 = -1.5, -2.5  # 0.0
         lgf14 = lgflux + 14
-        lgknorm_prime = lgknorm + (b1 - b2) * lgfb14[band]
+        lgnlgs_norm_prime = lgnlgs_norm + (b1 - b2) * lgfb14[band]
 
         mask = lgf14 > lgfb14[band]
 
         dnds = np.zeros_like(lgflux)
-        dnds[mask] = lgknorm_prime + b2 * lgf14[mask]
-        dnds[~mask] = lgknorm + b1 * lgf14[~mask]
+        dnds[mask] = lgnlgs_norm_prime + b2 * lgf14[mask]
+        dnds[~mask] = lgnlgs_norm + b1 * lgf14[~mask]
 
         return dnds
 
     rng = np.random.default_rng()
 
     logs = np.linspace(np.log10(fmin), np.log10(fmax), num=101)
-    logn = logn_logs(logs, band)
+    logn = logn_logs(logs, lgnlgs_norm, band)
 
-    area_fov = np.pi * (fov / 2) ** 2  # This should be in sq.deg.
-    nsources = 10 ** logn[0] * area_fov.value  # This is not an integer
+    area_fov = np.pi * (fov / 2)**2  # This should be in sq.deg.
+    nsources = 10**logn[0] * area_fov.value  # This is not an integer
 
     # try:
     #     # We do a poisson realization to add more randomness
@@ -121,8 +121,8 @@ def _random_fluxes(fov, fmin, fmax, band="SOFT", bright_sources=0):
     # For sampling a flux distribution following the logN-logS,
     # I need the cumulative of the differential
     # cdf = 1 - logNlogS (if normalize to one in the interval)
-    cdf = 1 - 10 ** (logn - logn[0])
-    flux = 10 ** np.interp(rng.random(nsources), cdf, logs)
+    cdf = 1 - 10**(logn - logn[0])
+    flux = 10**np.interp(rng.random(nsources), cdf, logs)
 
     if bright_sources:
         bright_lgflux = (-13 + 12.0) * rng.random(bright_sources) - 11.0
