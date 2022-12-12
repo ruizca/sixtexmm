@@ -169,7 +169,7 @@ class ExposureXMM:
         ra, dec, pa = self.startracker_pointing
 
         att = Table()
-        att["TIME"] = np.arange(0, self.exposure_time + dt, step=dt)
+        att["TIME"] = np.arange(0, self.exposure_time + dt, step=dt, dtype=np.float32)
         att["AHFRA"] = ra
         att["AHFDEC"] = dec
         att["AHFPA"] = pa  # self.rollangle

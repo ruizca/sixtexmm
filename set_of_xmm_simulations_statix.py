@@ -63,7 +63,10 @@ def simulate_xmm_exposure(
     )
 
     bkg_simput_file = simput.make_bkg(xmmexp, eband)
-    src_simput_file = simput.make_catalogue(xmmexp, eband)
+
+    # We use a higher value of the logN-logS normalization 
+    # to obtain more detectable sources per observation
+    src_simput_file = simput.make_catalogue(xmmexp, eband, max_depth=12, lgnlgs_norm=1.5)
 
     if transient_flux is not False:
         transient_simput_file = simput.make_transient(

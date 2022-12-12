@@ -42,7 +42,7 @@ def make_bkg(xmmexp, eband):
     return bkg_simput_file
 
 
-def make_catalogue(xmmexp, eband):
+def make_catalogue(xmmexp, eband, **kwargs):
     # Create simput file for catalogue of sources
     src_simput_file = f"{xmmexp.prefix}_catalogue.simput"
     catalogue.simput(
@@ -50,7 +50,8 @@ def make_catalogue(xmmexp, eband):
         xmmexp.pointing.dec,
         xmmexp.fov,
         src_simput_file,
-        eband
+        eband,
+        **kwargs,
     )
     return src_simput_file
 
