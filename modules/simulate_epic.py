@@ -4,15 +4,20 @@ Created on Thu Sep 17 13:16:01 2020
 
 @author: A.Ruiz
 """
+import warnings
 from tempfile import NamedTemporaryFile
 
 import numpy as np
 import pxsas
 from astropy.io import fits
 from astropy.table import Table
+from astropy.units import UnitsWarning
 
 from . import simulate_ccd
 from .badpixels import BADPN, BADMOS
+
+# Ignore all UnitsWarning
+warnings.filterwarnings("ignore", category=UnitsWarning)
 
 rng = np.random.default_rng()
 

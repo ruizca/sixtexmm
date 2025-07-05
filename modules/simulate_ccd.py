@@ -10,7 +10,9 @@ import numpy as np
 import sixty
 from astropy.io import fits
 from astropy.table import Table
+from packaging.version import Version
 
+from .utils import get_sixte_version
 
 class SimCCD:
     instrument_dir = sixty._sixte_dir.joinpath("share", "sixte", "instruments", "xmm")
@@ -66,7 +68,12 @@ class SimCCD:
 
     def _runsixt(self, xml_file, attitude_file):
         sixte_parameters = self._set_sixte_parameters(xml_file, attitude_file)
-        sixty.run("runsixt", **sixte_parameters)
+        installed_sixte_version = get_sixte_version()
+
+        if installed_sixte_version >= Version("3.0.0"):
+            sixty.run("sixtesim", **sixte_parameters)
+        else:
+            sixty.run("runsixt", **sixte_parameters)
 
     def _set_sixte_parameters(self, xml_file, attitude_file):
         parameters = {

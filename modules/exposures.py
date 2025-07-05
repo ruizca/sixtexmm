@@ -125,7 +125,7 @@ class ExposureXMM:
     def _set_exposure_time(exposure_time):
         if exposure_time is None:
             exposure_time_set = [10000.0, 25000.0, 50000.0, 100000.0]
-            weights = [0.25, 0.5, 0.2, 0.05]  # [1.0, 0.0, 0.0, 0.0]
+            # weights = [0.25, 0.5, 0.2, 0.05]  # [1.0, 0.0, 0.0, 0.0]
             exposure_time = rng.choice(exposure_time_set)#, p=weights)
 
         return exposure_time

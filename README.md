@@ -34,10 +34,11 @@ SIXTE and SAS has to be installed in your system and initilized for using these 
 The following Python packages are also needed:
 
 * astropy
+* astropy-healpix
 * numpy
 * sixty
 * pxsas
-* mocpy
+* mocpy (>= v0.12)
 
 [![ahead2020](ahead2020_logo.png)](http://ahead.astro.noa.gr/)
 

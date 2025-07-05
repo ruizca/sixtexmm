@@ -6,7 +6,7 @@
   <psf filename="xmm_pn_psf.fits"/>
   <vignetting filename="xmm_pn_vignet.fits"/>
  </telescope>
- <detector type="EPIC-pn">
+ <detector type="ccd">
   <dimensions xwidth="64" ywidth="200"/>
   <wcs rota="180.0" xdelt="0.00015" xrpix="32.5" xrval="0.020569999694824218" ydelt="0.00015" yrpix="100.5" yrval="0.01314550018310547"/>
   <cte value="1"/>

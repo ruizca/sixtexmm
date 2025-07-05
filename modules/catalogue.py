@@ -11,7 +11,6 @@ from astropy.io import fits
 from astropy.table import Table
 from astropy_healpix import HEALPix
 from mocpy import MOC
-from mocpy.mocpy import flatten_pixels
 
 import xspec as xs
 from .enums import Eband
@@ -137,8 +136,8 @@ def _random_coordinates(ra, dec, fov, nsources, max_depth=12):
     # distributed in the FoV and we avoid overlaping sources
     hp = HEALPix(nside=2 ** max_depth, order="nested", frame=FK5())
 
-    moc_fov = MOC.from_cone(ra, dec, fov / 2, max_depth=max_depth)
-    hpcells_fov = flatten_pixels(moc_fov._interval_set._intervals, moc_fov.max_order)
+    moc_fov = MOC.from_cone(ra, dec, radius=fov/2, max_depth=max_depth)
+    hpcells_fov = moc_fov.flatten()
     hpcells_src = rng.choice(hpcells_fov, nsources, replace=False)
 
     return hp.healpix_to_skycoord(hpcells_src.astype(int))

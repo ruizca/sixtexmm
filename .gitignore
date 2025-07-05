@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 
 sims/
+epic_xml_files/xml/

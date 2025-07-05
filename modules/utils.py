@@ -1,9 +1,11 @@
 import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
 import pxsas
 from astropy.io import fits
+from packaging.version import Version
 
 
 def make_ccf(path, date=None):
@@ -73,3 +75,20 @@ def move_files(xmmexp, data_path):
 
     for simfile in cwd.glob(f"*{xmmexp.prefix}*"):
         shutil.move(simfile, exposure_path.joinpath(simfile.name))
+
+
+def get_sixte_version():
+    v = _get_version("sixte")
+
+    return Version(v)
+
+
+def _get_version(task):
+    if task not in ["sixte", "simput"]:
+        raise ValueError(f"Unknown task: {task}")
+
+    output = subprocess.check_output(f"{task}version")
+    v = output.split(b"\n")
+    v = v[0].split()
+
+    return v[-1].decode()
