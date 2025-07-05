@@ -20,7 +20,7 @@ learning how to use these tools.
 The main motivation for developing this tools was the creation of a 
 [large set of simulations](set_of_xmm_simulations_statix.py) used to characterize the 
 performance of the [STATiX source detection pipeline](https://github.com/ruizca/statix) 
-(Ruiz et al. 2023, in preparation). Check the paper for a detailed explanation of the 
+([Ruiz et al. 2024, A&A](https://doi.org/10.1093/mnras/stad3339)). Check the paper for a detailed explanation of the 
 full setup of these simulations.
 
 
