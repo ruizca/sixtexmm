@@ -15,7 +15,6 @@ from packaging.version import Version
 from .utils import get_sixte_version
 
 class SimCCD:
-    instrument_dir = sixty._sixte_dir.joinpath("share", "sixte", "instruments", "xmm")
 
     def __init__(
         self,
@@ -26,13 +25,23 @@ class SimCCD:
         output_file_evt,
         output_file_evt_xmm,
         split_bkg=False,
+        instrument_dir=None,
     ):
         self.xmmexp = xmmexp
         self.ccd = ccd
         self.simput_file = simput_file
+        self.instrument_dir = self._set_instrument_dir(instrument_dir)
         self.output_files = self._set_output_files(
             output_file_raw, output_file_evt, output_file_evt_xmm, split_bkg
         )
+
+    def _set_instrument_dir(self, instrument_dir) -> Path:
+        if instrument_dir is None:
+            instrument_dir = sixty._sixte_dir.joinpath("share", "sixte", "instruments", "xmm")
+        else:
+            instrument_dir = Path(instrument_dir)
+
+        return instrument_dir
 
     def _set_output_files(self, raw, evt, evt_xmm, split_bkg):
         files = {

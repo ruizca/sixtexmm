@@ -38,7 +38,7 @@ src.simput(
     pointing.dec,
     xmmexp_mos1.mjdref,
     eband=eband,
-    flux=1e-13,
+    flux=1e-12,
     spec_file="xspec/age_lognlogs_spectrum.xcm",
     output_file=src_simput_file,
 )
@@ -53,6 +53,7 @@ xmm_mos1_evt_file = sp.run_xmm_simulation(
     particle_bkg="low",
     split_bkg=False,
     badpixels=False,
+    instrument_dir="/storage/sixte_instrument_files/xmm/"
 )
 
 utils.make_images(xmmexp_mos1, xmm_mos1_evt_file)

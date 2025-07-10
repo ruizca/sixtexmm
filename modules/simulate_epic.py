@@ -23,8 +23,50 @@ rng = np.random.default_rng()
 
 
 def run_xmm_simulation(
-    xmmexp, simput_file, particle_bkg=None, make_attitude=False, split_bkg=False, badpixels=False, suffix="objevlifilt.FIT"
+    xmmexp, 
+    simput_file, 
+    particle_bkg=None, 
+    make_attitude=False, 
+    split_bkg=False, 
+    badpixels=False, 
+    suffix="objevlifilt.FIT",
+    instrument_dir=None,
 ):
+    """
+    Runs an XMM-Newton/EPIC simulation for a given experiment setup and SIMPUT file.
+    This function orchestrates the simulation process, including optional attitude file generation,
+    per-CCD simulation, event file merging, bad pixel correction, and background splitting.
+    
+    Parameters:
+        xmmexp (ExposureXMM): 
+        An experiment object containing configuration and methods for the simulation.
+        
+        simput_file (str): 
+        Path to the SIMPUT file containing the source model.
+        
+        particle_bkg (str, optional): 
+        If set, intensity of particle background ("low", "med" or "high") to include in the simulation. Default is None.
+        
+        make_attitude (bool, optional): If True, generate attitude files for the simulation. Default is False.
+
+        split_bkg (bool, optional): 
+        If True, split the background and source event files. Default is False.
+
+        badpixels (bool, optional): 
+        If True, flag bad pixels in the output event file. Default is False.
+        
+        suffix (str, optional): 
+        Suffix for the output event file name. Default is "objevlifilt.FIT".
+        
+        instrument_dir (str, optional): 
+        Path to the directory containing the XMM instrument files. If None, the default folder in the SIXTE installation is used. Default is None.
+    
+    Returns:
+        str: Path to the final merged and processed event file.
+    Raises:
+        Exception: Propagates exceptions raised during simulation steps.
+    
+    """
     output_file_raw = f"{xmmexp.prefix}_raw.fits"
     output_file_evt = f"{xmmexp.prefix}_evt.fits"
     output_file_evt_xmm = f"{xmmexp.prefix}-{suffix}"
@@ -46,9 +88,10 @@ def run_xmm_simulation(
             output_file_raw,
             output_file_evt,
             output_file_evt_xmm,
-            attitude_file=attitude_file,
-            include_gti=True,
-            particle_bkg=particle_bkg,
+            attitude_file,
+            particle_bkg,
+            instrument_dir,
+            include_gti=True,            
             split_bkg=split_bkg,
         )
 
@@ -75,8 +118,9 @@ def run_xmm_simulation_ccd(
     output_file_evt,
     output_file_evt_xmm,
     attitude_file=None,
-    include_gti=False,
     particle_bkg=None,
+    instrument_dir=None,
+    include_gti=False,
     split_bkg=False,
 ):
     sim_class = getattr(simulate_ccd, f"Sim{xmmexp.detector.long}")
@@ -88,6 +132,7 @@ def run_xmm_simulation_ccd(
         output_file_evt,
         output_file_evt_xmm,
         split_bkg,
+        instrument_dir
     )
     sim.run(particle_bkg, attitude_file, include_gti)
 
