@@ -12,6 +12,7 @@ import pxsas
 from astropy.io import fits
 from astropy.table import Table
 from astropy.units import UnitsWarning
+from joblib import Parallel, delayed
 
 from . import simulate_ccd
 from .badpixels import BADPN, BADMOS
@@ -31,6 +32,7 @@ def run_xmm_simulation(
     badpixels=False, 
     suffix="objevlifilt.FIT",
     instrument_dir=None,
+    n_threads=1,
 ):
     """
     Runs an XMM-Newton/EPIC simulation for a given experiment setup and SIMPUT file.
@@ -59,13 +61,14 @@ def run_xmm_simulation(
         Suffix for the output event file name. Default is "objevlifilt.FIT".
         
         instrument_dir (str, optional): 
-        Path to the directory containing the XMM instrument files. If None, the default folder in the SIXTE installation is used. Default is None.
+        Path to the directory containing the XMM instrument files. If None, the default folder in the 
+        SIXTE installation is used. Default is None.
+
+        n_threads (int, optional):
+        Number of threads to use for parallel processing. Default is 1 (no parallelization).
     
     Returns:
-        str: Path to the final merged and processed event file.
-    Raises:
-        Exception: Propagates exceptions raised during simulation steps.
-    
+        Path: Path to the final merged and processed event file.
     """
     output_file_raw = f"{xmmexp.prefix}_raw.fits"
     output_file_evt = f"{xmmexp.prefix}_evt.fits"
@@ -80,8 +83,8 @@ def run_xmm_simulation(
     else:
         attitude_file = None
 
-    for ccd in xmmexp.detector.ccds:
-        run_xmm_simulation_ccd(
+    Parallel(n_jobs=n_threads, verbose=0, backend="multiprocessing")(
+        delayed(run_xmm_simulation_ccd)(
             xmmexp,
             ccd,
             simput_file,
@@ -91,9 +94,10 @@ def run_xmm_simulation(
             attitude_file,
             particle_bkg,
             instrument_dir,
-            include_gti=True,            
+            include_gti=True,
             split_bkg=split_bkg,
-        )
+        ) for ccd in xmmexp.detector.ccds
+    )
 
     _merge_and_fix_evt_files(xmmexp, output_file_evt_xmm)
 

@@ -53,7 +53,8 @@ xmm_mos1_evt_file = sp.run_xmm_simulation(
     particle_bkg="low",
     split_bkg=False,
     badpixels=False,
-    instrument_dir="/storage/sixte_instrument_files/xmm/"
+    instrument_dir="/storage/sixte_instrument_files/xmm/",
+    n_threads=7,  # Set to 1 for no parallelization
 )
 
 utils.make_images(xmmexp_mos1, xmm_mos1_evt_file)

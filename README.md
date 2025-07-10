@@ -38,6 +38,7 @@ The following Python packages are also needed:
 * sixty
 * pxsas
 * mocpy (>= v0.12)
+* joblib
 
 [![ahead2020](ahead2020_logo.png)](http://ahead.astro.noa.gr/)
 
